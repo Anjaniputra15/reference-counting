@@ -14,15 +14,20 @@ class ReferenceTracker:
     
     def __init__(self, name: str):
         self.name = name
-        self.ref_count = 0
-        print(f"🔵 Created object '{name}' (initial ref count: 1)")
+        # Get the actual reference count at creation time
+        # Subtract 1 because sys.getrefcount() includes the parameter passed to it
+        # (i.e., 'self' in this case)
+        initial_ref_count = sys.getrefcount(self) - 1
+        print(f"🔵 Created object '{name}' (initial ref count: {initial_ref_count})")
     
     def __del__(self):
         print(f"🔴 Object '{self.name}' is being deallocated (ref count reached 0)")
     
     def get_ref_count(self) -> int:
         """Get the current reference count of this object."""
-        return sys.getrefcount(self) - 1  # Subtract 1 for the function parameter
+        # sys.getrefcount() returns the count including the parameter passed to it
+        # So we subtract 1 to get the actual reference count
+        return sys.getrefcount(self) - 1
     
     def show_status(self, context: str = ""):
         """Display the current reference count with context."""
